@@ -48,3 +48,34 @@ export const sendMessage = async (req, res) => {
       .json({ error: "Internal server error.", error2: error.message });
   }
 };
+
+export const getMessages = async (req, res) => {
+  try {
+    const { id: userToChatId } = req.params;
+    const senderId = req.user._id;
+    const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+    let receiver;
+    let conversation;
+
+    if (isValidObjectId(userToChatId)) {
+      receiver = await User.findById(userToChatId);
+      if (!receiver) {
+        return res
+          .status(404)
+          .json({ error: "There is no user with that ID." });
+      }
+    } else {
+      return res.status(400).json({ error: "It is not a valid id number." });
+    }
+
+    conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiver._id] },
+    }).populate("messages");
+
+    res.status(200).json(conversation.messages);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal server error.", error: error.message });
+  }
+};
