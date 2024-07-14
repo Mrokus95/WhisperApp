@@ -4,8 +4,12 @@ import authRoutes from "./routes/auth.routes.js";
 import connectToMongoDB from "./db/connect.js";
 
 config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+//Middleware
+app.use(express.json());
 
 //Routes
 app.use("/api/auth", authRoutes);
