@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import protectRoute from "./middleware/protectRoute.js";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import connectToMongoDB from "./db/connect.js";
 
 config();
@@ -18,6 +19,7 @@ app.use(cookieParser());
 //Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", protectRoute, messageRoutes);
+app.use("/api/users", protectRoute, userRoutes);
 
 try {
   await connectToMongoDB();
