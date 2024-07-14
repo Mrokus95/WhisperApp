@@ -1,12 +1,22 @@
-const express = require("express");
-const dotenv = require("dotenv");
+import express from "express";
+import { config } from "dotenv";
+import authRoutes from "./routes/auth.routes.js";
+import connectToMongoDB from "./db/connect.js";
 
-dotenv.config();
+config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.get("/", (req, res) => {
-  res.send("Hello world!");
-});
+//Middleware
+app.use(express.json());
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//Routes
+app.use("/api/auth", authRoutes);
+
+try {
+  await connectToMongoDB();
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+} catch (error) {
+  console.error("Error during setting up project.", error.message);
+}
